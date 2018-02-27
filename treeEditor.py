@@ -20,27 +20,29 @@ def main():
 
     for root, dirs, files in os.walk(wd):
         for d in dirs:
+            d = path.join(root, d)
             newname = rename(d, '')
             if newname:
-                dirs[dirs.index(d)] = newname
+                dirs[dirs.index(path.basename(d))] = newname
         for f in files:
+            f = path.join(root, f)
             newname = rename(f, '')
             if newname:
-                files[files.index(f)] = newname
+                files[files.index(path.basename(f))] = newname
 
 def rename(filename, repl, pattern=regex):
     """ Subitute with repl, a substring of filename matching pattern.
         Rename the file with the new made string.
         Return True if the rename was successful. False otherwise."""
 
-    if pattern.match(filename):
-        newname = pattern.sub(repl, filename)
-        root = path.dirname(filename)
-        oldpath = path.join(root, filename)
-        newpath = path.join(root, newname)
+    basename = path.basename(filename)
+
+    if pattern.match(basename):
+        newname = pattern.sub(repl, basename)
+        newpath = path.join(path.dirname(filename), newname)
         if newpath:
             try:
-                os.rename(oldpath, newpath)
+                os.rename(filename, newpath)
             except OSError as exc:
                 print(exc)
                 return None

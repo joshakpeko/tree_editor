@@ -4,15 +4,15 @@
     root directory.
     The specified regex or a self-defined one help replace(or remove)
     annoying substrings of the filenames.
-    Ex: "[ Torrenteleven.dummy ] FiftyShadesOfBlack.FRENCH.avi"
-    can be renamed to "FiftyShadesOfBlack.FRENCH.avi".
+    Ex: "[ Torrenteleven.dummy ] Do_You_Trust_This_Computer.mp4"
+    can be renamed to "Do_You_Trust_This_Computer.mp4".
 """
 
 import os, re
 import os.path as path
 
 wd = os.getcwd()
-regex = re.compile(r'^\[.*\]\s?')
+regex = re.compile(r'^(\[[^]]*\]\s*)')
 
 def main():
     """ Navigate top-down the directories tree and rename directories
@@ -39,14 +39,15 @@ def rename(filename, repl, pattern=regex):
 
     if pattern.match(basename):
         newname = pattern.sub(repl, basename)
-        newpath = path.join(path.dirname(filename), newname)
-        if newpath:
+        if newname:
+            newpath = path.join(path.dirname(filename), newname)
             try:
                 os.rename(filename, newpath)
             except OSError as exc:
                 print(exc)
                 return None
-        return newname
+            else:
+                return newname
     return None
 
 
